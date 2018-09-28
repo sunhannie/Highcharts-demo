@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Data about Ulu Ad</title>
+  <meta name="google-signin-client_id" content="911260228291-d2b7cjs7c0ajobjd6l89133tv4bmrcjb.apps.googleusercontent.com">
+  <meta name="google-signin-scope" content="https://www.googleapis.com/auth/analytics.readonly">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <link rel="apple-touch-icon-precomposed" href="http://static.ftchinese.com/img/ipad_icon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="styles/main.css">
+
+</head>
+<body>
+
+
+
+<p align=right>
+  <!-- The Sign-in button. This will run `queryReports()` on success. -->
+  <div class="g-signin2" data-onsuccess="queryReports"></div>
+</p>
+
+<div class="page-container" id="charts-container">
+  <h1 class="page-title">Uluad Click</h1>
+</div>
+
+
+<script src="../bower_components/highcharts/highcharts.js"></script>
+<script src="../bower_components/highcharts/highcharts-more.js"></script>
+<script src="../bower_components/highmaps-beta/modules/map.js"></script>
+<script src="../bower_components/highmaps-beta/modules/data.js"></script>
+<script type="text/javascript" src="scripts/highcharts.js"></script>
+<script type="text/javascript" src="scripts/main.js"></script>
+
+
+
+<script>
+// MARK: - These are different in every page. 
+
+// Replace with your view ID.
+var VIEW_ID = '10995661';
+
+//var startDate = '2017-06-21';//测试那天为06-21
+//var endDate = '2017-06-21';
+var startDate = '2017-07-10';
+var endDate = '2017-07-14';
+function constructQuerryData(startDate, endDate) {
+  var queryData = [
+    {//监控广告点击后客户记录成功
+      'viewId': VIEW_ID,
+      'dateRanges': [
+        {
+          'startDate': startDate,
+          'endDate': endDate
+        }
+      ],
+      'metrics': [
+        {
+          'expression': 'ga:totalEvents'
+        }
+      ],
+      'dimensions': [
+        {
+          'name': 'ga:date'
+        }
+      ],
+      'dimensionFilterClauses': [
+        {
+          'operator': 'AND',
+          'filters': [
+            {
+              'dimensionName': 'ga:eventCategory',
+              'operator': 'EXACT',
+              'expressions': [
+                'uluAd'
+              ],
+              'caseSensitive': true
+            },
+            {
+              'dimensionName': 'ga:eventAction',
+              'operator': 'REGEXP',
+              'expressions': [
+                'Success'
+              ],
+              'caseSensitive': true
+            }
+          ]
+        }
+      ]
+    },
+    {//监控广告点击后客户记录失败
+      'viewId': VIEW_ID,
+      'dateRanges': [
+        {
+          'startDate': startDate,
+          'endDate': endDate
+        }
+      ],
+      'metrics': [
+        {
+          'expression': 'ga:totalEvents'
+        }
+      ],
+      'dimensions': [
+        {
+          'name': 'ga:date'
+        }
+      ],
+      'dimensionFilterClauses': [
+        {
+          'operator': 'AND',
+          'filters': [
+            {
+              'dimensionName': 'ga:eventCategory',
+              'operator': 'EXACT',
+              'expressions': [
+                'uluAd'
+              ],
+              'caseSensitive': true
+            },
+            {
+              'dimensionName': 'ga:eventAction',
+              'operator': 'EXACT',
+              'expressions': [
+                'Fail'
+              ],
+              'caseSensitive': true
+            }
+          ]
+        }
+      ]
+    },
+    /*
+    {//监控广告点击（by 请求发出）
+      'viewId': VIEW_ID,
+      'dateRanges': [
+        {
+          'startDate': startDate,
+          'endDate': endDate
+        }
+      ],
+      'metrics': [
+        {
+          'expression': 'ga:totalEvents'
+        }
+      ],
+      'dimensions': [
+        {
+          'name': 'ga:date'
+        }
+      ],
+      'dimensionFilterClauses': [
+        {
+          'operator': 'AND',
+          'filters': [
+            {
+              'dimensionName': 'ga:eventCategory',
+              'operator': 'EXACT',
+              'expressions': [
+                'uluAd'
+              ],
+              'caseSensitive': true
+            },
+            {
+              'dimensionName': 'ga:eventAction',
+              'operator': 'EXACT',
+              'expressions': [
+                'Request'
+              ],
+              'caseSensitive': true
+            }
+          ]
+        }
+      ]
+    },
+    */
+    {//监控广告点击（by 直接监控click)
+      'viewId': VIEW_ID,
+      'dateRanges': [
+        {
+          'startDate': startDate,
+          'endDate': endDate
+        }
+      ],
+      'metrics': [
+        {
+          'expression': 'ga:totalEvents'
+        }
+      ],
+      'dimensions': [
+        {
+          'name': 'ga:date'
+        }
+      ],
+      'dimensionFilterClauses': [
+        {
+          'operator': 'AND',
+          'filters': [
+            {
+              'dimensionName': 'ga:eventCategory',
+              'operator': 'EXACT',
+              'expressions': [
+                'Story Recommend'
+              ],
+              'caseSensitive': true
+            },
+            {
+              'dimensionName': 'ga:eventAction',
+              'operator': 'EXACT',
+              'expressions': [
+                'Click-002'
+              ],
+              'caseSensitive': true
+            },
+            {
+              'dimensionName': 'ga:eventLabel',
+              'operator': 'EXACT',
+              'expressions': [
+                'uluAd'
+              ],
+              'caseSensitive': true
+            }
+          ]
+        }
+      ]
+    },
+    {//监控ulu的广告曝光
+      'viewId': VIEW_ID,
+      'dateRanges': [
+        {
+          'startDate': startDate,
+          'endDate': endDate
+        }
+      ],
+      'metrics': [
+        {
+          'expression': 'ga:totalEvents'
+        }
+      ],
+      'dimensions': [
+        {
+          'name': 'ga:date'
+        }
+      ],
+      'dimensionFilterClauses': [
+        {
+          'operator': 'AND',
+          'filters': [
+            {
+              'dimensionName': 'ga:eventCategory',
+              'operator': 'EXACT',
+              'expressions': [
+                'Story Recommend With Ad'
+              ],
+              'caseSensitive': true
+            },
+            {
+              'dimensionName': 'ga:eventAction',
+              'operator': 'EXACT',
+              'expressions': [
+                'Seen-002'
+              ],
+              'caseSensitive': true
+            }
+          ]
+        }
+      ] 
+    },
+    {//监控ulu的广告数据投放
+      'viewId': VIEW_ID,
+      'dateRanges': [
+        {
+          'startDate': startDate,
+          'endDate': endDate
+        }
+      ],
+      'metrics': [
+        {
+          'expression': 'ga:totalEvents'
+        }
+      ],
+      'dimensions': [
+        {
+          'name': 'ga:date'
+        }
+      ],
+      'dimensionFilterClauses': [
+        {
+          'operator': 'AND',
+          'filters': [
+            {
+              'dimensionName': 'ga:eventCategory',
+              'operator': 'EXACT',
+              'expressions': [
+                'Story Recommend With Ad'
+              ],
+              'caseSensitive': true
+            },
+            {
+              'dimensionName': 'ga:eventAction',
+              'operator': 'REGEXP',
+              'expressions': [
+                'Got Data'
+              ],
+              'caseSensitive': true
+            }
+          ]
+        }
+      ] 
+    }
+
+  ];
+  return queryData;
+}
+
+function drawCharts(gaData) {
+  // MARK: - The base key which should have no gap in data
+  var keys = gaData.reports[0].data.rows.map(function(row){
+    return row.dimensions[0];
+  });
+  var chartId;
+
+  // MARK: Get Google Analytics Dimensions
+  var successRecord = extractDataFromGAAPI(gaData.reports[0].data.rows, keys);//成功总数
+  var failRecord = extractDataFromGAAPI(gaData.reports[1].data.rows, keys);//第一次失败次数
+  //var requestRecord = extractDataFromGAAPI(gaData.reports[2].data.rows, keys);
+  var clickRecord = extractDataFromGAAPI(gaData.reports[2].data.rows, keys);
+
+  var inviewRecord = extractDataFromGAAPI(gaData.reports[3].data.rows, keys);
+
+  var gotDataRecord = extractDataFromGAAPI(gaData.reports[4].data.rows, keys);
+  
+  const outputData = [];
+  for(let i=0,len=keys.length;i<len;i++) {
+    const outputDatum = {
+      date:keys[i],
+      gotDataRecord: gotDataRecord[i],
+      inviewRecord: inviewRecord[i],
+      clickRecord: clickRecord[i],
+      seccessRecord:successRecord[i]
+    }
+    outputData.push(outputDatum);
+  }
+  console.log(JSON.stringify(outputData));
+
+  chartId = createChart();
+  var clickChart = new Highcharts.Chart({
+      chart: {
+          type: 'column',
+          renderTo: chartId
+      },
+      title: {
+          text: 'UluAdClick'
+      },
+      xAxis: {
+          categories: keys,
+          title: {
+              enabled: false
+          }
+      },
+      yAxis: {
+          tickmarkPlacement: 'on'
+      },
+      tooltip: {
+          pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y:.1f}</b><br/>',
+          shared: true
+      },
+      plotOptions: {
+        area: {
+          stacking: 'normal'
+        }
+      },
+      series: [
+        {
+          name: 'Success',
+          data: successRecord
+        },
+        {
+          name: 'Fail',
+          data: failRecord
+        },
+        /*
+        {
+          name:'Request',
+          data: requestRecord
+        },
+        */
+        {
+          name:'Click',
+          data: clickRecord
+        },
+        {
+          name:'Inview',
+          data: inviewRecord
+        },
+        {
+          name: 'Got data',
+          data: gotDataRecord
+        }
+      
+      ],
+      credits: {
+        enabled: false
+      },
+      legend: {
+        enabled: true
+      }
+    });
+}
+</script>
+
+
+
+
+<!-- Load the JavaScript API client and Sign-in library. -->
+<script src="https://apis.google.com/js/client:platform.js"></script>
+
+</body>
+</html>
